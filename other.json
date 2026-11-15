@@ -1,0 +1,30 @@
+{
+  "id": "other",
+  "category": "其他分享",
+  "categoryEn": "Others",
+  "scriptEn": "Others",
+  "tutorialUrl": null,
+  "tip": "",
+  "actionBtn": {
+    "name": "好用分享",
+    "link": "https://iq0o7fpo.jsjform.com/f/zF6Kxz"
+  },
+  "feedbackBtn": {
+    "name": "意见反馈",
+    "link": "https://iq0o7fpo.jsjform.com/f/DMasSK"
+  },
+  "items": [
+    {
+      "name": "图片批处理",
+      "subName": "批量重命名，裁剪，格式转换",
+      "link": "https://pan.baidu.com/s/1rxw10HVszRe5dwmcQ-I3LA?pwd=e96b",
+      "imageUrl": null
+    },
+    {
+      "name": "PSD缩略图插件",
+      "subName": "",
+      "link": "https://pan.baidu.com/s/1Wi-3Vm_ZKOdAoCQvgA5NEQ?pwd=1ydw",
+      "imageUrl": null
+    }
+  ]
+}

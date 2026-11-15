@@ -1,0 +1,44 @@
+{
+  "id": "material",
+  "category": "素材分享",
+  "categoryEn": "Material",
+  "scriptEn": "Material",
+  "tutorialUrl": null,
+  "tip": "小红书：观月抱云 自绘素材  免费可商用 使用请标注：顾舒云",
+  "actionBtn": {
+    "name": "素材分享",
+    "link": "https://iq0o7fpo.jsjform.com/f/JaI52M"
+  },
+  "items": [
+    {
+      "name": "水墨五枚",
+      "link": "https://pan.baidu.com/s/13uv3VU5gPZaQCJls88-m7w?pwd=3bu9",
+      "imageUrl": "https://bee-reg-ab.imagency.cn/mr/202610/19/6ad5f95c63b11.jpg"
+    },
+    {
+      "name": "枝",
+      "link": "https://pan.baidu.com/s/12reqh1SbUvcBdmtl87GjwA?pwd=rm5u",
+      "imageUrl": "https://bee-reg-ab.imagency.cn/mr/202610/19/6ad5f95d93f2e.jpg"
+    },
+    {
+      "name": "夏日简笔画",
+      "link": "https://pan.baidu.com/s/14uh0kl1VcUmIsT8ZtolKYg?pwd=8jjn",
+      "imageUrl": "https://bee-reg-ab.imagency.cn/mr/202610/19/6ad5f95f7242f.jpg"
+    },
+    {
+      "name": "封面常用",
+      "link": "https://pan.baidu.com/s/5N28s_LGmbj9Sjsvjbcun5w",
+      "imageUrl": "https://bee-reg-ab.imagency.cn/mr/202610/19/6ad5f95c19916.jpg"
+    },
+    {
+      "name": "水墨小花",
+      "link": "https://pan.baidu.com/s/1qj4scBDhZ_iqMi06kgNE0g?pwd=jyi4",
+      "imageUrl": "https://bee-reg-ab.imagency.cn/mr/202610/19/6ad5f961ef60d.jpg"
+    },
+    {
+      "name": "水墨QQ人三枚",
+      "link": "https://pan.baidu.com/s/1F742labMC0T_ikzUCvFogA?pwd=47rc",
+      "imageUrl": "https://bee-reg-ab.imagency.cn/mr/202610/19/6ad5f95c49d5e.jpg"
+    }
+  ]
+}

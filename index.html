@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>从0开始的PS水印生活 · 原创圈分享站</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Noto+Serif+SC:wght@300;400;500;600&family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- 51.LA 访客统计代码 开始 -->
+    <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
+    <script>LA.init({id:"3RjWvJCpazPTUDbD",ck:"3RjWvJCpazPTUDbD",autoTrack:true})</script>
+    <!-- 51.LA 访客统计代码 结束 -->
+
+    <style>
+        /* ===== 全局与变量 ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', 'Noto Serif SC', system-ui, sans-serif; }
+        body { background-color: #f9f6f0; min-height: 100vh; overflow-x: hidden; }
+        :root {
+            --blush: #f7e4e8; --lavender: #e3dfec; --sage: #d9e6df; --sand: #f3e9de;
+            --mist: #dfe7ed; --cream: #fdfaf6;
+            --ink: #4a4453; --ink-soft: #6b6575; --ink-light: #9b94a3;
+            --accent-rose: #d9b8c4; --accent-rose-dark: #c4a0b0; --accent-mint: #b7d0c5;
+            --shadow-sm: 0 4px 12px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.02);
+            --shadow-md: 0 12px 28px -8px rgba(90,70,90,0.08), 0 4px 12px rgba(0,0,0,0.02);
+            --shadow-lg: 0 24px 48px -12px rgba(120,100,120,0.12);
+            --radius-card: 20px; --radius-btn: 60px;
+        }
+
+        /* ===== 入场页 ===== */
+        .landing {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: var(--cream); z-index: 1000;
+            transition: opacity 0.9s cubic-bezier(0.23, 1, 0.32, 1), visibility 0.9s;
+            cursor: pointer; padding: 2rem;
+        }
+        .landing.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        
+        .logo-mark { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; animation: floatIn 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        .logo-icon { width: 140px; height: 140px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .logo-shape { position: absolute; border-radius: 50%; transition: transform 0.4s ease; }
+        .shape-moon { width: 100px; height: 100px; background: var(--blush); left: 0; top: 12px; box-shadow: 0 8px 24px -6px rgba(217,184,196,0.4); }
+        .shape-cloud1 { width: 70px; height: 70px; background: var(--lavender); left: 50px; top: 0; opacity: 0.85; box-shadow: 0 8px 20px -4px rgba(180,170,200,0.3); }
+        .shape-cloud2 { width: 60px; height: 60px; background: var(--sage); left: 30px; top: 65px; opacity: 0.8; box-shadow: 0 8px 18px -4px rgba(150,180,160,0.3); }
+        .shape-ring { width: 130px; height: 130px; border: 3px solid var(--accent-rose); top: 5px; left: 5px; opacity: 0.35; }
+        .shape-dot { width: 16px; height: 16px; background: var(--accent-mint); bottom: 18px; right: 12px; opacity: 0.9; }
+
+        /* 标题通用样式 */
+        .logo-text { position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; }
+        .bg-script { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -55%); font-family: 'Great Vibes', cursive; font-size: 6.5rem; color: var(--accent-rose); opacity: 0.35; white-space: nowrap; pointer-events: none; z-index: 1; letter-spacing: 2px; }
+        .logo-title { position: relative; z-index: 2; display: flex; align-items: flex-end; justify-content: center; font-family: 'Noto Serif SC', serif; color: var(--ink); line-height: 1; }
+        .char-cong { font-size: 2.6rem; font-weight: 300; transform: translateY(-6px); margin-right: 2px; }
+        .char-ling { font-size: 3.6rem; font-weight: 500; letter-spacing: 2px; }
+        .char-kai  { font-size: 2.6rem; font-weight: 300; transform: translateY(-6px); letter-spacing: 2px; }
+        .char-shi  { font-size: 2.6rem; font-weight: 300; transform: translateY(-6px); margin-left: 2px; }
+        .logo-sub { z-index: 2; font-family: 'Outfit', sans-serif; font-size: 0.9rem; letter-spacing: 9px; color: var(--ink-light); font-weight: 300; text-transform: uppercase; margin-top: 0.4rem; padding-left: 8px; }
+
+        /* 社交链接 */
+        .social-line { margin-top: 2.8rem; display: flex; align-items: center; justify-content: center; gap: 1.8rem; flex-wrap: wrap; font-size: 0.9rem; font-weight: 400; z-index: 2; animation: fadeInUp 1.4s 0.3s both; }
+        .social-line a { display: inline-flex; align-items: center; background: rgba(255,255,255,0.6); backdrop-filter: blur(2px); padding: 0.55rem 1.4rem; border-radius: 60px; border: 1px solid rgba(217,184,196,0.3); transition: all 0.2s; text-decoration: none; color: var(--ink-soft); }
+        .social-line a:hover { background: #fff; transform: translateY(-2px); }
+        .social-line i, .social-line svg { margin-right: 0.5rem; color: var(--accent-rose-dark); opacity: 0.8; font-size: 1rem; width: 1.1rem; height: 1.1rem; }
+        .tap-hint { position: absolute; bottom: 40px; width: 100%; text-align: center; color: var(--ink-light); font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; animation: pulseSoft 2.4s infinite; display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+        .tap-hint i { color: var(--accent-rose); }
+
+        /* ===== 页面容器结构 ===== */
+        .main-wrapper {
+            opacity: 0; visibility: hidden; transition: opacity 0.6s ease, visibility 0.6s;
+            width: 100%; min-height: 100vh; display: flex; flex-direction: column;
+        }
+        .main-wrapper.visible { opacity: 1; visibility: visible; }
+
+        /* 右上角悬浮按钮组 */
+        .nav-btn-group {
+            position: fixed; top: 2rem; right: 2rem; display: flex; flex-direction: column; gap: 0.8rem; z-index: 100;
+        }
+        .nav-btn {
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px); color: var(--ink-soft); text-decoration: none;
+            padding: 0.6rem 1.2rem; border-radius: 30px; font-size: 0.85rem; font-weight: 500;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem; box-shadow: var(--shadow-md);
+            border: 1px solid rgba(217,184,196,0.4); transition: all 0.3s ease; cursor: pointer;
+        }
+        .nav-btn:hover { background: #fff; color: var(--ink); border-color: var(--accent-rose); transform: translateY(-2px); }
+        .nav-btn i { color: var(--accent-rose-dark); font-size: 0.9rem; }
+
+        .download-ps-btn.hidden { display: none !important; }
+
+        /* ===== 第一层：分类入口大厅 ===== */
+        .portal-view {
+            width: 100%; max-width: 1200px; margin: 0 auto; padding: 4rem 1rem;
+            display: flex; flex-direction: column; align-items: center;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .portal-view.hidden { opacity: 0; transform: scale(0.98); pointer-events: none; position: absolute; }
+        
+        .portal-header { 
+            margin-bottom: 3.5rem; 
+            transform: scale(0.9); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+
+        .portal-feedback {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; width: 100%; }
+        
+        /* 核心卡片样式 */
+        .category-card {
+            background: #fff; border-radius: var(--radius-card); padding: 3rem 1rem;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; border: 1px solid rgba(217,184,196,0.2); box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); position: relative; overflow: hidden;
+            text-decoration: none;
+        }
+        .category-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: rgba(217,184,196,0.6); }
+        .category-card:hover .bg-script { transform: translate(-50%, -55%) scale(1.05); opacity: 0.45; }
+        .category-card .bg-script { font-size: 4.5rem; opacity: 0.25; transition: all 0.3s ease; }
+        .category-card .logo-title { gap: 4px; }
+        .category-card .logo-title span { font-size: 2.2rem; font-weight: 500; letter-spacing: 4px; color: var(--ink); }
+        .category-card .category-en { font-family: 'Outfit', sans-serif; font-size: 0.8rem; letter-spacing: 4px; color: var(--ink-light); margin-top: 0.8rem; text-transform: uppercase; z-index: 2; }
+
+        /* ===== 第二层：资源详情页 ===== */
+        .detail-view {
+            width: 100%; max-width: 1300px; margin: 0 auto; padding: 4rem 1rem 5rem;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+        .detail-view.hidden { opacity: 0; transform: translateY(20px); pointer-events: none; position: absolute; }
+
+        .detail-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 3rem; }
+        .detail-header .logo-text { transform: scale(1); margin-bottom: 0.5rem; }
+        .detail-header .bg-script { font-size: 5.5rem; }
+        
+        /* 居中的视频教程按钮容器 */
+        .tutorial-wrapper { 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            align-items: center; 
+            margin-top: 0.8rem; 
+            margin-bottom: 0.5rem;
+            z-index: 2; 
+        }
+        
+        /* 统一按钮样式 */
+        .action-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(217, 184, 196, 0.5);
+            color: var(--accent-rose-dark); font-size: 0.8rem; font-weight: 500;
+            padding: 0.4rem 1.2rem; border-radius: 30px; text-decoration: none;
+            transition: all 0.2s ease; letter-spacing: 1px;
+            box-shadow: var(--shadow-sm); cursor: pointer;
+            white-space: nowrap;
+            line-height: 1; 
+        }
+        .action-btn i {
+            font-size: 0.9rem; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .action-btn:hover { background: #fff; border-color: var(--accent-rose); color: var(--ink); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        
+        /* 意见反馈特殊红色样式 */
+        .action-btn.feedback-btn {
+            border-color: rgba(233, 145, 145, 0.5);
+            color: #c0392b;
+        }
+        .action-btn.feedback-btn:hover {
+            background: #fdf2f2;
+            border-color: #e74c3c;
+        }
+
+        .commercial-tip { margin-top: 0.8rem; font-size: 0.8rem; color: var(--ink-light); letter-spacing: 1px; z-index: 2; text-align: center; line-height: 1.5; padding: 0 1rem; }
+        .copy-tip { margin-top: 0.5rem; font-size: 0.75rem; color: var(--ink-light); letter-spacing: 0.5px; z-index: 2; text-align: center; padding: 0 1rem; }
+
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; width: 100%; }
+        .resource-card { background: #fff; border-radius: var(--radius-card); box-shadow: var(--shadow-sm); overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; border: 1px solid rgba(217,184,196,0.2); }
+        .resource-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: rgba(217,184,196,0.5); }
+        
+        /* 多图滑动容器 / 无图占位 */
+        .preview-image { 
+            width: 100%; 
+            aspect-ratio: 1 / 1; 
+            background: var(--mist); 
+            position: relative; 
+            overflow: hidden; 
+            cursor: grab;
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none; 
+            -ms-overflow-style: none;  
+            user-select: none; 
+        }
+        .preview-image:active { cursor: grabbing; }
+        .preview-image::-webkit-scrollbar { display: none; } 
+        
+        .preview-image img { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            flex-shrink: 0;
+            transition: transform 0.5s; 
+            pointer-events: none; 
+        }
+        .resource-card:hover .preview-image img { transform: scale(1.03); }
+
+        .no-image-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #fdfaf6, #f3e9de);
+            color: var(--ink-light);
+            gap: 0.5rem;
+            cursor: default;
+        }
+        .no-image-placeholder i {
+            font-size: 2rem;
+            color: var(--accent-rose);
+            opacity: 0.5;
+        }
+        .no-image-placeholder span {
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+        
+        .image-indicator {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--ink);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 5;
+            border: 1px solid rgba(217,184,196,0.4);
+        }
+        
+        .card-content { padding: 1.2rem 1rem; display: flex; flex-direction: column; gap: 0.8rem; flex: 1; }
+        
+        /* 资源名称与副标题 */
+        .resource-title-box { display: flex; flex-direction: column; gap: 0.2rem; }
+        .resource-name { font-size: 1rem; font-weight: 500; color: var(--ink); display: flex; align-items: center; justify-content: space-between; word-break: break-word; line-height: 1.4; width: 100%; }
+        .resource-name-left { display: flex; gap: 0.5rem; align-items: center; }
+        .resource-name i { color: var(--accent-rose-dark); font-size: 0.95rem; }
+        .resource-subname { font-size: 0.75rem; color: var(--ink-light); padding-left: 1.6rem; letter-spacing: 0.5px; }
+        
+        .link-row { display: flex; align-items: center; gap: 0.4rem; background: #f9f7f5; border-radius: var(--radius-btn); padding: 0.2rem 0.2rem 0.2rem 0.8rem; border: 1px solid rgba(217,184,196,0.25); transition: all 0.2s; margin-top: auto; }
+        .link-row:focus-within { border-color: var(--accent-rose); box-shadow: 0 0 0 3px rgba(217,184,196,0.15); }
+        .link-text { flex: 1; font-size: 0.75rem; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: monospace; border: none; background: transparent; outline: none; padding: 0.4rem 0; }
+        
+        .copy-btn { background: #fff; border: 1px solid rgba(217,184,196,0.5); border-radius: var(--radius-btn); padding: 0.45rem 0.8rem; font-size: 0.75rem; color: var(--ink-soft); display: flex; align-items: center; gap: 0.3rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
+        .copy-btn:hover { background: #fdf3f6; border-color: var(--accent-rose); color: var(--ink); }
+        .copy-btn.copied { background: #e2efe7; border-color: #a8c8b5; color: #3e6b51; }
+        .copy-btn.copied i { color: #3e8b5f; }
+
+        /* 单个资源的教程按钮 */
+        .item-tutorial-btn {
+            background: rgba(217, 184, 196, 0.15); border: 1px solid rgba(217, 184, 196, 0.5);
+            border-radius: var(--radius-btn); padding: 0.45rem 0.8rem; font-size: 0.75rem; color: var(--accent-rose-dark);
+            display: flex; align-items: center; gap: 0.3rem; cursor: pointer; transition: all 0.2s; flex-shrink: 0; text-decoration: none;
+        }
+        .item-tutorial-btn:hover { background: var(--accent-rose); color: #fff; border-color: var(--accent-rose); }
+
+        /* ===== 图片大图预览 (Lightbox) ===== */
+        .lightbox {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(249, 246, 240, 0.85); backdrop-filter: blur(8px);
+            z-index: 2000; display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; cursor: zoom-out;
+        }
+        .lightbox.active { opacity: 1; visibility: visible; }
+        .lightbox img {
+            max-width: 90vw; max-height: 85vh; border-radius: 12px; box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            object-fit: contain;
+        }
+        .lightbox.active img { transform: scale(1); }
+        .lightbox-close {
+            position: absolute; top: 2rem; right: 2rem; width: 44px; height: 44px;
+            background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: var(--shadow-md); color: var(--ink); transition: all 0.2s;
+        }
+        .lightbox-close:hover { transform: rotate(90deg) scale(1.1); color: var(--accent-rose-dark); }
+
+        @keyframes floatIn { 0% { opacity: 0; transform: translateY(20px) scale(0.96); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(12px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseSoft { 0%, 100% { opacity: 0.5; } 50% { opacity: 0.9; } }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f4f0ec; }
+        ::-webkit-scrollbar-thumb { background: #dacccf; border-radius: 12px; }
+
+        @media (max-width: 640px) {
+            .bg-script { font-size: 4.5rem; }
+            .char-cong, .char-shi, .char-kai { font-size: 1.8rem; }
+            .char-ling { font-size: 2.4rem; letter-spacing: 0px; }
+            .logo-sub { font-size: 0.7rem; letter-spacing: 6px; }
+            .social-line { flex-direction: column; gap: 0.8rem; }
+            .social-line a { width: 90%; justify-content: center; }
+            
+            .portal-view, .detail-view { padding-top: 5rem; }
+            .nav-btn-group { top: 1rem; right: 1rem; gap: 0.5rem; }
+            .nav-btn { padding: 0.5rem 1rem; font-size: 0.75rem; }
+            
+            .portal-header { margin-bottom: 2rem; transform: scale(0.75); }
+            .category-grid { gap: 1.2rem; }
+            .category-card { padding: 2rem 1rem; }
+            .category-card .bg-script { font-size: 3.5rem; }
+            .category-card .logo-title span { font-size: 1.8rem; letter-spacing: 2px; }
+            
+            .detail-header .bg-script { font-size: 4rem; }
+            .card-grid { gap: 1.2rem; grid-template-columns: 1fr; }
+            .copy-btn span, .item-tutorial-btn span { display: none; }
+            .copy-btn, .item-tutorial-btn { padding: 0.6rem 0.8rem; }
+            
+            .commercial-tip { font-size: 0.75rem; }
+            .copy-tip { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 入场页 -->
+    <div class="landing" id="landing">
+        <div class="logo-mark">
+            <div class="logo-icon">
+                <div class="logo-shape shape-moon"></div>
+                <div class="logo-shape shape-cloud1"></div>
+                <div class="logo-shape shape-cloud2"></div>
+                <div class="logo-shape shape-ring"></div>
+                <div class="logo-shape shape-dot"></div>
+            </div>
+            <div class="logo-text">
+                <div class="bg-script">Beginning</div>
+                <div class="logo-title">
+                    <span class="char-cong">从</span>
+                    <span class="char-ling">零</span>
+                    <span class="char-kai">开</span>
+                    <span class="char-shi">始</span>
+                </div>
+                <div class="logo-sub">From · Zero</div>
+            </div>
+        </div>
+
+        <div class="social-line">
+            <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=CaTq%2F7LeYL9doRaeNShagBG6z5MZwCBL%2BysbmwxB06MtT4dNJxU2KoPdHkKPk17Y&busi_data=eyJncm91cENvZGUiOiI4NzYwNTMwMzQiLCJ0b2tlbiI6Im16bENYNHJ5cVBPb015blRUK2tTYll6NFhQaFhNdVkyc2Rsczd5ZGx3VWdqaHVtcjgrUWxzc0pBM3Z0VXhtbVMiLCJ1aW4iOiI0ODExNDQ5MSJ9&data=bHHfxl4r_RQS3xM-R6LMQ93BU-HTn8FhbI-CHy2DzsyerzY54bk9Sk3KUNZoN2WsUo2tlY0nyX_ZWWxyghEotw&svctype=4&tempid=h5_group_info" target="_blank" rel="noopener noreferrer">
+                <i class="fa-brands fa-qq"></i> QQ群：876053034
+            </a>
+            <a href="https://xhslink.cn/o/6EBvHDP8kHg" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-book-open"></i> 小红书：观月抱云
+            </a>
+        </div>
+
+        <div class="tap-hint">
+            <i class="fas fa-chevron-down"></i> 点击任意位置进入 <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+
+    <!-- 网站主体 -->
+    <div class="main-wrapper" id="mainWrapper">
+        
+        <div class="nav-btn-group">
+            <div class="nav-btn" id="navBackBtn">
+                <i class="fas fa-arrow-left"></i> <span id="backBtnText">返回首页</span>
+            </div>
+            <a href="https://www.yuque.com/islandgg13/tdg1oz/dzmses" target="_blank" class="nav-btn download-ps-btn" id="downloadPsBtn">
+                <i class="fas fa-arrow-down"></i> <span>下载PS</span>
+            </a>
+            <div id="navActionBtns"></div>
+        </div>
+
+        <div class="portal-view" id="portalView">
+            <div class="portal-header">
+                <div class="logo-text">
+                    <div class="bg-script">Beginning</div>
+                    <div class="logo-title">
+                        <span class="char-cong">从</span>
+                        <span class="char-ling">零</span>
+                        <span class="char-kai">开</span>
+                        <span class="char-shi">始</span>
+                    </div>
+                    <div class="logo-sub">观月抱云 · 原创分享站</div>
+                </div>
+                <div class="portal-feedback" id="portalFeedbackBtn"></div>
+            </div>
+            <div class="category-grid" id="categoryGrid"></div>
+        </div>
+
+        <div class="detail-view hidden" id="detailView">
+            <div class="detail-header">
+                <div class="logo-text" id="detailHeaderText"></div>
+                <div id="tutorialContainer"></div>
+            </div>
+            <div class="card-grid" id="resourceGrid"></div>
+        </div>
+
+    </div>
+
+    <!-- 大图预览 (Lightbox) 容器 -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-close" id="lightboxClose"><i class="fas fa-times"></i></div>
+        <img src="" alt="大图预览" id="lightboxImg">
+    </div>
+
+    <script>
+        (function() {
+            const jsonFiles = [
+                'watermark.json',
+                'mockup.json',
+                'style.json',
+                'material.json',
+                'font.json',
+                'other.json'
+            ];
+
+            const landing = document.getElementById('landing');
+            const mainWrapper = document.getElementById('mainWrapper');
+            const portalView = document.getElementById('portalView');
+            const detailView = document.getElementById('detailView');
+            const categoryGrid = document.getElementById('categoryGrid');
+            const resourceGrid = document.getElementById('resourceGrid');
+            const detailHeaderText = document.getElementById('detailHeaderText');
+            const tutorialContainer = document.getElementById('tutorialContainer');
+            const navBackBtn = document.getElementById('navBackBtn');
+            const backBtnText = document.getElementById('backBtnText');
+            const downloadPsBtn = document.getElementById('downloadPsBtn');
+            
+            const navActionBtns = document.getElementById('navActionBtns');
+            const portalFeedbackBtn = document.getElementById('portalFeedbackBtn');
+
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const lightboxClose = document.getElementById('lightboxClose');
+
+            let currentView = 'landing';
+
+            async function initSite() {
+                try {
+                    const fetchPromises = jsonFiles.map(file => fetch(file).then(res => {
+                        if(!res.ok) throw new Error(`无法读取 ${file}`);
+                        return res.json();
+                    }));
+                    
+                    const siteData = await Promise.all(fetchPromises);
+                    renderPortal(siteData);
+                } catch (error) {
+                    console.error("数据加载失败：", error);
+                    categoryGrid.innerHTML = `<div style="color: #d9b8c4; padding: 2rem; text-align: center; grid-column: 1 / -1;">
+                        <h3>数据加载失败</h3>
+                        <p>请确保在服务器环境下运行，或检查 JSON 文件是否有语法错误。</p>
+                    </div>`;
+                }
+            }
+
+            function renderPortal(siteData) {
+                categoryGrid.innerHTML = '';
+                
+                let feedbackConfig = null;
+                siteData.forEach(section => {
+                    if(section.feedbackBtn) feedbackConfig = section.feedbackBtn;
+                });
+
+                portalFeedbackBtn.innerHTML = '';
+                if (feedbackConfig) {
+                    const btn = document.createElement('a');
+                    btn.className = 'action-btn feedback-btn';
+                    btn.href = feedbackConfig.link;
+                    btn.target = '_blank';
+                    btn.innerHTML = `<i class="fas fa-envelope"></i> ${feedbackConfig.name}`;
+                    portalFeedbackBtn.appendChild(btn);
+                }
+
+                siteData.forEach(section => {
+                    const card = document.createElement('div');
+                    card.className = 'category-card';
+                    
+                    card.innerHTML = `
+                        <div class="bg-script">${section.scriptEn}</div>
+                        <div class="logo-title">
+                            <span>${section.category}</span>
+                        </div>
+                        <div class="category-en">${section.categoryEn}</div>
+                    `;
+
+                    card.addEventListener('click', () => {
+                        openDetailPage(section);
+                    });
+
+                    categoryGrid.appendChild(card);
+                });
+
+                // 渲染直接跳转的固定卡片
+                const lanzhouCard = document.createElement('a');
+                lanzhouCard.className = 'category-card';
+                lanzhouCard.href = 'https://lanzhouduyue-10n3p663a3.maozi.io/';
+                lanzhouCard.target = '_blank';
+                lanzhouCard.innerHTML = `
+                    <div class="bg-script">Moonlight</div>
+                    <div class="logo-title">
+                        <span>兰舟渡月</span>
+                    </div>
+                    <div class="category-en">LANZHOU</div>
+                `;
+                categoryGrid.appendChild(lanzhouCard);
+
+                const yongjieCard = document.createElement('a');
+                yongjieCard.className = 'category-card';
+                yongjieCard.href = 'https://yongjieidgjz-3p663a3.maozi.io/';
+                yongjieCard.target = '_blank';
+                yongjieCard.innerHTML = `
+                    <div class="bg-script">Naraka</div>
+                    <div class="logo-title">
+                        <span>永劫工具站</span>
+                    </div>
+                    <div class="category-en">YONGJIE</div>
+                `;
+                categoryGrid.appendChild(yongjieCard);
+            }
+
+            function openDetailPage(sectionData) {
+                if (window.LA) {
+                    LA.track('click_module', { module: sectionData.category || '未知分类' });
+                }
+
+                detailHeaderText.innerHTML = `
+                    <div class="bg-script">${sectionData.scriptEn}</div>
+                    <div class="logo-title">
+                        <span>${sectionData.category}</span>
+                    </div>
+                    <div class="logo-sub">${sectionData.categoryEn}</div>
+                `;
+
+                tutorialContainer.innerHTML = '';
+                navActionBtns.innerHTML = '';
+                
+                if (sectionData.tutorialUrl) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'tutorial-wrapper';
+                    
+                    const btn = document.createElement('a');
+                    btn.className = 'action-btn';
+                    btn.href = sectionData.tutorialUrl;
+                    btn.target = '_blank';
+                    btn.innerHTML = `<i class="fas fa-play-circle"></i> <span>观看视频教程</span>`;
+                    
+                    wrapper.appendChild(btn);
+                    tutorialContainer.appendChild(wrapper);
+                }
+
+                if (sectionData.actionBtn) {
+                    const btn = document.createElement('a');
+                    btn.className = 'nav-btn'; 
+                    btn.href = sectionData.actionBtn.link;
+                    btn.target = '_blank';
+                    btn.innerHTML = `<i class="fas fa-envelope"></i> <span>${sectionData.actionBtn.name}</span>`;
+                    navActionBtns.appendChild(btn);
+                }
+
+                if (sectionData.tip) {
+                    const tipDiv = document.createElement('div');
+                    tipDiv.className = 'commercial-tip';
+                    tipDiv.textContent = sectionData.tip;
+                    tutorialContainer.appendChild(tipDiv);
+                }
+
+                const copyTipDiv = document.createElement('div');
+                copyTipDiv.className = 'copy-tip';
+                copyTipDiv.textContent = '点击复制按钮。打开百度网盘即可保存内容，建议转存至自己的个人网盘，以免链接失效。';
+                tutorialContainer.appendChild(copyTipDiv);
+
+                resourceGrid.innerHTML = '';
+                sectionData.items.forEach(item => {
+                    resourceGrid.appendChild(createResourceCard(item));
+                });
+
+                portalView.classList.add('hidden');
+                detailView.classList.remove('hidden');
+                currentView = 'detail';
+                backBtnText.textContent = '返回大厅';
+                
+                downloadPsBtn.classList.add('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            function createResourceCard(item) {
+                const card = document.createElement('div');
+                card.className = 'resource-card';
+
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'preview-image';
+                
+                const images = item.imageUrl ? (Array.isArray(item.imageUrl) ? item.imageUrl : [item.imageUrl]) : [];
+                
+                if (images.length === 0) {
+                    previewDiv.innerHTML = `
+                        <div class="no-image-placeholder">
+                            <i class="fas fa-cloud"></i>
+                            <span>暂无预览图</span>
+                        </div>
+                    `;
+                    previewDiv.style.cursor = 'default';
+                } else {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'image-indicator';
+                    indicator.textContent = images.length > 1 ? `1/${images.length}` : '';
+                    
+                    images.forEach(url => {
+                        const img = document.createElement('img');
+                        img.src = url;
+                        img.alt = item.name;
+                        img.loading = 'lazy';
+                        previewDiv.appendChild(img);
+                    });
+
+                    let isDown = false;
+                    let startX;
+                    let scrollLeft;
+                    let isDragging = false;
+
+                    previewDiv.addEventListener('mousedown', (e) => {
+                        if (images.length <= 1) return;
+                        isDown = true;
+                        previewDiv.style.cursor = 'grabbing';
+                        startX = e.pageX - previewDiv.offsetLeft;
+                        scrollLeft = previewDiv.scrollLeft;
+                        isDragging = false;
+                    });
+
+                    previewDiv.addEventListener('mouseleave', () => {
+                        isDown = false;
+                        previewDiv.style.cursor = 'grab';
+                    });
+
+                    previewDiv.addEventListener('mouseup', () => {
+                        isDown = false;
+                        previewDiv.style.cursor = 'grab';
+                    });
+
+                    previewDiv.addEventListener('mousemove', (e) => {
+                        if (!isDown) return;
+                        e.preventDefault();
+                        const x = e.pageX - previewDiv.offsetLeft;
+                        const walk = (x - startX) * 1.5; 
+                        previewDiv.scrollLeft = scrollLeft - walk;
+                        
+                        if (Math.abs(walk) > 10) {
+                            isDragging = true;
+                        }
+                    });
+
+                    previewDiv.addEventListener('scroll', () => {
+                        if (images.length > 1) {
+                            const containerWidth = previewDiv.clientWidth;
+                            if (containerWidth > 0) {
+                                const index = Math.round(previewDiv.scrollLeft / containerWidth) + 1;
+                                indicator.textContent = `${index}/${images.length}`;
+                            }
+                        }
+                    });
+
+                    previewDiv.appendChild(indicator);
+
+                    previewDiv.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if(item.link === '#') return;
+                        
+                        if (isDragging) {
+                            isDragging = false;
+                            return;
+                        }
+
+                        let clickIndex = 0;
+                        if (images.length > 1) {
+                            const containerWidth = previewDiv.clientWidth;
+                            if (containerWidth > 0) {
+                                clickIndex = Math.round(previewDiv.scrollLeft / containerWidth);
+                            }
+                        }
+                        clickIndex = Math.min(clickIndex, images.length - 1);
+                        
+                        lightboxImg.src = images[clickIndex];
+                        lightbox.classList.add('active');
+                    });
+                }
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'card-content';
+
+                const titleBox = document.createElement('div');
+                titleBox.className = 'resource-title-box';
+                
+                // ======= 修改部分开始：在名称右侧增加教程按钮 =======
+                const nameDiv = document.createElement('div');
+                nameDiv.className = 'resource-name';
+                
+                // 左侧：图标 + 名称
+                const nameLeft = document.createElement('div');
+                nameLeft.className = 'resource-name-left';
+                nameLeft.innerHTML = `<i class="fas fa-cloud"></i> <span>${item.name}</span>`;
+                nameDiv.appendChild(nameLeft);
+
+                // 右侧：如果有 tutorialUrl 则渲染「教程」按钮
+                if (item.tutorialUrl) {
+                    const tutorialBtn = document.createElement('a');
+                    tutorialBtn.className = 'item-tutorial-btn';
+                    tutorialBtn.href = item.tutorialUrl;
+                    tutorialBtn.target = '_blank';
+                    tutorialBtn.innerHTML = `<i class="fas fa-play-circle"></i><span>教程</span>`;
+                    nameDiv.appendChild(tutorialBtn);
+                }
+                titleBox.appendChild(nameDiv);
+                // ======= 修改部分结束 =======
+
+                if (item.subName) {
+                    const subNameDiv = document.createElement('div');
+                    subNameDiv.className = 'resource-subname';
+                    subNameDiv.textContent = item.subName;
+                    titleBox.appendChild(subNameDiv);
+                }
+
+                const linkRow = document.createElement('div');
+                linkRow.className = 'link-row';
+
+                const linkInput = document.createElement('input');
+                linkInput.className = 'link-text';
+                linkInput.type = 'text';
+                linkInput.value = item.link;
+                linkInput.readOnly = true;
+
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn';
+                copyBtn.innerHTML = `<i class="fas fa-copy"></i><span>复制</span>`;
+
+                copyBtn.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    const linkToCopy = item.link;
+                    
+                    if (linkToCopy === '#') {
+                        alert('暂无资源，敬请期待！');
+                        return;
+                    }
+                    
+                    try {
+                        await navigator.clipboard.writeText(linkToCopy);
+                        showCopySuccess(copyBtn);
+                    } catch (err) {
+                        try {
+                            const tempInput = document.createElement('input');
+                            tempInput.value = linkToCopy;
+                            tempInput.style.position = 'fixed';
+                            tempInput.style.opacity = '0';
+                            document.body.appendChild(tempInput);
+                            tempInput.select();
+                            const success = document.execCommand('copy');
+                            document.body.removeChild(tempInput);
+                            if (success) showCopySuccess(copyBtn);
+                            else alert('复制失败，请手动选中复制');
+                        } catch (fallbackErr) {
+                            alert('无法复制，请手动选择链接复制。');
+                        }
+                    }
+                });
+
+                function showCopySuccess(button) {
+                    const originalHTML = button.innerHTML;
+                    button.innerHTML = `<i class="fas fa-check"></i><span>已复制</span>`;
+                    button.classList.add('copied');
+                    setTimeout(() => {
+                        button.innerHTML = originalHTML;
+                        button.classList.remove('copied');
+                    }, 1800);
+                }
+
+                linkRow.appendChild(linkInput);
+                linkRow.appendChild(copyBtn);
+                contentDiv.appendChild(titleBox);
+                contentDiv.appendChild(linkRow);
+
+                card.appendChild(previewDiv);
+                card.appendChild(contentDiv);
+                return card;
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                setTimeout(() => { 
+                    if(!lightbox.classList.contains('active')) lightboxImg.src = ''; 
+                }, 300);
+            }
+
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox || e.target.closest('.lightbox-close')) {
+                    closeLightbox();
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                    closeLightbox();
+                }
+            });
+
+            landing.addEventListener('click', function(e) {
+                if (e.target.closest('a')) return;
+                landing.classList.add('hidden');
+                mainWrapper.classList.add('visible');
+                currentView = 'portal';
+                backBtnText.textContent = '返回首页';
+                downloadPsBtn.classList.remove('hidden');
+                
+                if (window.LA) {
+                    LA.track('click_module', { module: '进入大厅' });
+                }
+            });
+
+            navBackBtn.addEventListener('click', function() {
+                if (currentView === 'detail') {
+                    detailView.classList.add('hidden');
+                    portalView.classList.remove('hidden');
+                    currentView = 'portal';
+                    backBtnText.textContent = '返回首页';
+                    downloadPsBtn.classList.remove('hidden');
+                    navActionBtns.innerHTML = '';
+                    window.scrollTo(0, 0);
+                } else if (currentView === 'portal') {
+                    mainWrapper.classList.remove('visible');
+                    landing.classList.remove('hidden');
+                    currentView = 'landing';
+                }
+            });
+
+            initSite();
+        })();
+    </script>
+</body>
+</html>
